@@ -39,9 +39,12 @@ def main():
                 for idx, value in enumerate(dirList):
                     print("[{}]:{}".format(idx, value))
                 # 使用者輸入
-                dirIdex = input("請選擇內含wnid_file的資料夾(ex.:0):")
+                dirIdex = input("請選擇內含wnid_file的資料夾(9527=exit)(ex.:0):")
                 if not dirIdex.isnumeric():
                     print("請輸入自然數！！")
+                elif int(dirIdex) == 9527:
+                    print("掰掰")
+                    break
                 elif int(dirIdex) > len(dirList) - 1:
                     print("請輸入有效數字！！")
                 else:

@@ -104,7 +104,8 @@ def foreman(url_file_name, working_dirPath):
     thread_pool = []
 
     download_dirPath = os.path.join(working_dirPath, "image_" + url_file_name[-1])
-    os.makedirs(download_dirPath)
+    if not os.path.exists(download_dirPath)
+        os.makedirs(download_dirPath)
 
 
     if num_threads > 1:

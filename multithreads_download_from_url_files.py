@@ -71,7 +71,7 @@ def get_picture(image_dir, line_queue,  put_done):
                         fh.close()
 
 def put_urls(url_file, line_queue,  put_done):
-    with open(url_file) as f:
+    with open(url_file, encoding='ascii', errors='replace', mode='r') as f:
         while True:
             '''
             當queue里的資料數大於100條，

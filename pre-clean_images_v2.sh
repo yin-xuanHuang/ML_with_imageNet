@@ -7,7 +7,8 @@
 4. 統一圖片格式
 '''
 
-
+# 預設 y = 0 的資料量為 y = 1 的資料量三倍。
+((y0dy1=3))
 
 clear
 
@@ -123,14 +124,16 @@ cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
+((count1=0))
+((count0=0))
+
 mkdir cleaned_dir
 
-# 檔案處理開始
-for d in image_*;
+# error or miss 檔案處理開始
+for d in image_1 image_0;
 do
   cd "$d"
   pwd
-  ((count_num=0))
   for f in *;
   do
     if [[ `file "$f" | grep -v 'image data\|PC bitmap'` == "" ]]
@@ -147,25 +150,66 @@ do
           continue
         fi
       fi
-      # 統一圖片格式
-      if [[ `file "$f" | grep -v 'JPEG'` != ""  ]]
+      if [[ "$d" == "image_1" ]]
       then
-        cd ..
-        convert "$d"/"$f" cleaned_dir/i_"$count_num"_"$d".JPEG
-        cd "$d"
+        # 統一圖片格式
+        if [[ `file "$f" | grep -v 'JPEG'` != ""  ]]
+        then
+          cd ..
+          convert "$d"/"$f" cleaned_dir/i_"$count1"_"$d".JPEG
+          cd "$d"
+        else
+          cd ..
+          cp "$d"/"$f" cleaned_dir/i_"$count1"_"$d".JPEG
+          cd "$d"
+        fi
+        ((count1+=1))
       else
-        cd ..
-        cp "$d"/"$f" cleaned_dir/i_"$count_num"_"$d".JPEG
-        cd "$d"
+        ((count0+=1))
       fi
-      ((count_num+=1))
     else
       echo "Remove "$f" : Not image data."
       rm "$f"
     fi
   done
   cd ..
-  # 紀錄合法資料數量
-  echo ""$d":"$count_num"" >> count_images
 done
+
+echo "image_0:"$count0""
+echo "image_1:"$count1""
+
+# 紀錄合法資料數量
+echo "image_0:"$count0"" >> count_images
+echo "image_1:"$count1"" >> count_images
+
+
+# 如果 y = 0 資料量小於3倍的 y = 1，那 y = 0 設為原始資料量。
+if [[ $(( count0 / count1  )) -ge $y0dy1 ]]
+then
+  ((count1=count1 * 3))
+else
+  ((count1=count0))
+fi
+((count=0)) # debug
+cd image_0
+all_image_0_files=(*)
+random_file_range=( $(shuf -i 0-"$((count0 - 1))" -n "$count1" ))
+# 複製 image_0 的圖片到 cleaned_dir
+for idx in "${random_file_range[@]}";   #<-----亂數取得file
+do
+  # 統一圖片格式
+  if [[ `file "${all_image_0_files[$idx]}" | grep -v 'JPEG'` != ""  ]]
+  then
+    cd ..
+    convert "$d"/"${all_image_0_files[$idx]}" cleaned_dir/i_"$count"_"$d".JPEG
+    cd "$d"
+  else
+    cd ..
+    cp "$d"/"${all_image_0_files[$idx]}" cleaned_dir/i_"$count"_"$d".JPEG
+    cd "$d"
+  fi
+  ((count+=1))
+done
+cd ..
+echo "$count"
 echo "Pre-clean images done!"

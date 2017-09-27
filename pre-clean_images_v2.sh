@@ -27,6 +27,12 @@ declare -a miss_identify_arr=(\
 "97ce74f08c601dd19fcf0ba6a7fda4843450f6e68d3072c80899b8b0fbf2e301" \
 "91a5fc1b8ca65a2669d350e47eb07b33c673242819436a6da2ec550e7876b8fd" \
 "78099efe4dac098628e366b692052ec328d96aa5a0bf08cc971107e44f7cffa2" \
+"78099efe4dac098628e366b692052ec328d96aa5a0bf08cc971107e44f7cffa2" \
+"6c5eb60f549fac6ad4194afe73987d4081a8352dac80503dae0d2deaeeaba76e" \
+"3bcc63cddf7bbf80b548df6bf31bc5347852e7314a2f2272c223b5eacf41fc69" \
+"225615b7a237e6c2293c7ac3ce95ea6dc8a9ee98102c579b082c71aa2df89a11" \
+"6fc6f4524161c3ae0d316812d7088e3fcd372023edaea2d7821093be40ae1060" \
+"044f971d7da143edfed640800575f34ef87146c6a4522899caabd25ff82a30ad" \
 "fe293b3cbe5a0fdf156d08692e11ae6b29f99a0b9d394cca82e7c858b2fc74a8")
 
 # size of miss images
@@ -46,6 +52,11 @@ declare -a miss_size_arr=(\
 "90 x 90" \
 "374 x 53" \
 "222 x 168" \
+"390 x 390" \
+"200 x 200" \
+"200 x 200" \
+"1 x 1" \
+"140 x 120" \
 "140 x 120")
 
 declare -a darr=()
@@ -53,30 +64,40 @@ echo -n "Working directory(now):"
 pwd
 
 # 搜尋資料夾，並排除特定資料夾
-for f in */;
+for pd in */;
 do
-  if [[ "$f" == "urls/" ]] || [[ "$f" == "words/" ]]
+  if [[ "$pd" == "urls/" ]] || [[ "$pd" == "words/" ]]
   then
     continue
   else
-    darr+=("$f")
+    darr+=("$pd")
   fi
 done
 
 # 將可能的資料夾全部印出
 count=0
-for f in "${darr[@]}"
+for pf in "${darr[@]}"
 do
-  echo "["$count"]:"$f""
-  count+=1
+  echo "["$count"]:"$pf""
+  ((count+=1))
 done
+
+# 沒有有效資料夾，則結束程式
+if [[ ${#darr[@]} -eq 0 ]]
+then
+  echo "沒有有效資料夾！"
+  exit
+fi
 
 # 選擇工作資料夾，並判斷輸入的 idex 是否合格
 while true
 do
   echo -n "輸入需要pre-clean的資料夾[idex]:> "
   read dir_idex
-  if [[ ${#darr[@]} -le $dir_idex ]] || [[ $dir_idex -lt 0 ]] || [[ "$dir_idex" == "" ]]
+  if ! [[ "$dir_idex" =~ ^[0-9]+$ ]]
+  then
+    echo "請輸入自然數！"
+  elif [[ "$((${#darr[@]} - 1 ))" -lt "$dir_idex" ]]
   then
     echo "請輸入數字區間0~"$((${#darr[@]} - 1 ))""
   else
@@ -84,60 +105,67 @@ do
   fi
 done
 
+# 再次確認
+echo ""
+echo "注意！"
+echo "執行後將執行rm指令，移除非圖像檔案!"
+echo "移除後，無法復原！"
+echo -n "請再次確認資料夾： "${darr[$dir_idex]}" (yes or no): "
+read doOrnot
+if [[ "$doOrnot" != "yes" ]]
+then
+  echo "程式結束!"
+  exit
+fi
+
 # 切換到工作資料夾
 cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
-# 合法檔案格式
-declare -a allowArr=("JPEG" "PNG" "GIF" "PC")
 mkdir cleaned_dir
-cleaned_dir="../cleaned_dir"
 
 # 檔案處理開始
 for d in image_*;
 do
   cd "$d"
   pwd
-  count_num=0
+  ((count_num=0))
   for f in *;
   do
-    description=`file -b $f`
-    d_extension=${description%% *}
-    killed="NO"
-    # 判斷是否為合法圖片格式
-    if [[ " ${allowArr[@]} " =~ "$d_extension" ]]
+    if [[ `file "$f" | grep -v 'image data\|PC bitmap'` == "" ]]
     then
-      # miss images compare
-      identify_f=`identify -quiet -format "%#" $f`
-      if [[ " ${miss_identify_arr[@]} " =~ "$identify_f" ]]
+      identify_f=`identify -quiet -format "%#" "$f"`
+      if [[ " ${miss_identify_arr[@]} " =~ " $identify_f " ]]
       then
         size_f=`convert "$f" -format "%w x %h" info:`
-        if [[ " ${miss_size_arr[@]} " =~ "$size_f" ]]
+        if [[ " ${miss_size_arr[@]} " =~ " $size_f " ]]
         then
           # delete miss image
           echo "Remove "$f": Miss image."
-          rm "$f"
-          killed="YES"
+          rm $f
+          continue
         fi
       fi
-      # 統一圖片格式為JPEG
-      if [[ "$killed" == "NO" ]]
+      # 統一圖片格式
+      if [[ `file "$f" | grep -v 'JPEG'` != ""  ]]
       then
-        if [[ "$d_extension" != "JPEG" ]]
-        then
-          `convert "$f" "$cleaned_dir"/i_"$count_num"_"$d".JPEG`
-        else
-          `cp "$f"  "$cleaned_dir"/i_"$count_num"_"$d".JPEG`
-        fi
+        cd ..
+        convert "$d"/"$f" cleaned_dir/i_"$count_num"_"$d".JPEG
+        cd "$d"
+      else
+        cd ..
+        cp "$d"/"$f" cleaned_dir/i_"$count_num"_"$d".JPEG
+        cd "$d"
       fi
+      ((count_num+=1))
     else
-      # 非合法圖片刪除
-      echo "Remove "$f": Not a image file."
+      echo "Remove "$f" : Not image data."
       rm "$f"
     fi
-    ((count_num+=1))
   done
   cd ..
+  # 紀錄合法資料數量
+  echo ""$d":"$count_num"" >> count_images
 done
 echo "Pre-clean images done!"

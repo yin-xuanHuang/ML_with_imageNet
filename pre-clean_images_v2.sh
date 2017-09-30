@@ -7,58 +7,14 @@
 4. 統一圖片格式
 '''
 
-# 預設 y = 0 的資料量為 y = 1 的資料量三倍。
-((y0dy1=3))
-
 clear
 
 # signature hash of miss images
-declare -a miss_identify_arr=(\
-"d4a4670b11e2417464335769490b733ad959496426f2b5704ec6be297a133233" \
-"6063b581031cee0e0ae77f1a3f881a4ea0d22efdcbd56213c5aca0f374d33c27" \
-"6688801de89661b46437baaea5bcd8ab857e136d7f109a2986e16419ecea9ee4" \
-"c50781d3d929f9f3232f5baa988898ef8daa5591b0e395c973c1c999f3c900ae" \
-"91f80c9893c8225c48a3413439fe29baeb6b396e594cf0aead3f26cea0a6b484" \
-"1f5c9a8f9081d2c49b48c16415d3e83a31b595e5c75133c995da0c92e2b637fb" \
-"d1fffff4fb594a425bfc9c3ff0ff5027b37338be5ee82ce2a66530e2f95d6ed3" \
-"80cbe63642ee775d6abcc85cfd384ae70713570021e7c78936049d01a86e9e60" \
-"230111da249d63ff7ec52416fae0c27da67c2fd6737e877c8cb6d57f95a4adc7" \
-"8803cf3c04d6b3e221520f8400f3662371d709260b11e41a213abbc3228e770f" \
-"21bd8cef75b8317a1c659f8d5882ec4b385b6fa280d5298cb0abdc153e771d94" \
-"97ce74f08c601dd19fcf0ba6a7fda4843450f6e68d3072c80899b8b0fbf2e301" \
-"91a5fc1b8ca65a2669d350e47eb07b33c673242819436a6da2ec550e7876b8fd" \
-"78099efe4dac098628e366b692052ec328d96aa5a0bf08cc971107e44f7cffa2" \
-"78099efe4dac098628e366b692052ec328d96aa5a0bf08cc971107e44f7cffa2" \
-"6c5eb60f549fac6ad4194afe73987d4081a8352dac80503dae0d2deaeeaba76e" \
-"3bcc63cddf7bbf80b548df6bf31bc5347852e7314a2f2272c223b5eacf41fc69" \
-"225615b7a237e6c2293c7ac3ce95ea6dc8a9ee98102c579b082c71aa2df89a11" \
-"6fc6f4524161c3ae0d316812d7088e3fcd372023edaea2d7821093be40ae1060" \
-"044f971d7da143edfed640800575f34ef87146c6a4522899caabd25ff82a30ad" \
-"fe293b3cbe5a0fdf156d08692e11ae6b29f99a0b9d394cca82e7c858b2fc74a8")
+readarray -t miss_identify_arr < wrong_image_signature
 
 # size of miss images
 # 二次確認
-declare -a miss_size_arr=(\
-"200 x 200" \
-"240 x 240" \
-"500 x 374" \
-"55 x 55" \
-"371 x 450" \
-"827 x 230" \
-"775 x 185" \
-"200 x 200" \
-"240 x 134" \
-"640 x 480" \
-"400 x 250" \
-"90 x 90" \
-"374 x 53" \
-"222 x 168" \
-"390 x 390" \
-"200 x 200" \
-"200 x 200" \
-"1 x 1" \
-"140 x 120" \
-"140 x 120")
+readarray -t miss_size_arr < wrong_image_size
 
 declare -a darr=()
 echo -n "Working directory(now):"
@@ -67,7 +23,7 @@ pwd
 # 搜尋資料夾，並排除特定資料夾
 for pd in */;
 do
-  if [[ "$pd" == "urls/" ]] || [[ "$pd" == "words/" ]]
+  if [[ "$pd" == "urls/" ]] || [[ "$pd" == "words/" ]] || [[ "$pd" == "__pycache__/" ]]
   then
     continue
   else
@@ -109,8 +65,7 @@ done
 # 再次確認
 echo ""
 echo "注意！"
-echo "執行後將執行rm指令，移除非圖像檔案!"
-echo "移除後，無法復原！"
+echo "執行內容有rm指令，移除非圖像檔案!移除後，無法復原！"
 echo -n "請再次確認資料夾： "${darr[$dir_idex]}" (yes or no): "
 read doOrnot
 if [[ "$doOrnot" != "yes" ]]
@@ -124,12 +79,9 @@ cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
-((count1=0))
-((count0=0))
-
-mkdir cleaned_dir
-
+echo "第一階段：刪除miss images, not image dat 並且全部轉換成jpg。"
 # error or miss 檔案處理開始
+# 轉jpg
 for d in image_1 image_0;
 do
   cd "$d"
@@ -150,23 +102,10 @@ do
           continue
         fi
       fi
-      if [[ "$d" == "image_1" ]]
-      then
-        # 統一圖片格式
-        if [[ `file "$f" | grep -v 'JPEG'` != ""  ]]
-        then
-          cd ..
-          convert "$d"/"$f" cleaned_dir/i_"$count1"_"$d".JPEG
-          cd "$d"
-        else
-          cd ..
-          cp "$d"/"$f" cleaned_dir/i_"$count1"_"$d".JPEG
-          cd "$d"
-        fi
-        ((count1+=1))
-      else
-        ((count0+=1))
-      fi
+      cd ..
+      convert "$d"/"$f" "$d"/"$f".jpg
+      rm "$d"/"$f"
+      cd "$d"
     else
       echo "Remove "$f" : Not image data."
       rm "$f"
@@ -174,42 +113,4 @@ do
   done
   cd ..
 done
-
-echo "image_0:"$count0""
-echo "image_1:"$count1""
-
-# 紀錄合法資料數量
-echo "image_0:"$count0"" >> count_images
-echo "image_1:"$count1"" >> count_images
-
-
-# 如果 y = 0 資料量小於3倍的 y = 1，那 y = 0 設為原始資料量。
-if [[ $(( count0 / count1  )) -ge $y0dy1 ]]
-then
-  ((count1=count1 * 3))
-else
-  ((count1=count0))
-fi
-((count=0)) # debug
-cd image_0
-all_image_0_files=(*)
-random_file_range=( $(shuf -i 0-"$((count0 - 1))" -n "$count1" ))
-# 複製 image_0 的圖片到 cleaned_dir
-for idx in "${random_file_range[@]}";   #<-----亂數取得file
-do
-  # 統一圖片格式
-  if [[ `file "${all_image_0_files[$idx]}" | grep -v 'JPEG'` != ""  ]]
-  then
-    cd ..
-    convert "$d"/"${all_image_0_files[$idx]}" cleaned_dir/i_"$count"_"$d".JPEG
-    cd "$d"
-  else
-    cd ..
-    cp "$d"/"${all_image_0_files[$idx]}" cleaned_dir/i_"$count"_"$d".JPEG
-    cd "$d"
-  fi
-  ((count+=1))
-done
-cd ..
-echo "$count"
 echo "Pre-clean images done!"

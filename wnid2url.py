@@ -1,3 +1,16 @@
+'''
+上工之第二個腳本！
+
+此程式的工作為：
+  1. 將使用者上一步建立的wnid 結果為索引，
+     查找url/裡的url 檔案（請閱讀url/readme），
+     將對應的urls 寫入新創的_urls_1檔案，
+     另外隨機抓取非選擇的wnid 寫入新創的_urls_0檔案。
+  2. 注意，因為url 檔都1G左右，本程式目前版本是邊讀邊寫，
+     依據使用的的設備不同，下面的max_lines 可自行調整。
+
+'''
+
 import os
 from random import shuffle
 from psutil import virtual_memory
@@ -5,7 +18,7 @@ import time
 
 
 def main():
-    # 未避免記憶體塞暴，每隔 1024*256 強制清空一次 lists
+    # 未避免記憶體塞暴，每隔 1024*256 寫入一次，並強制清空一次 lists
     max_lines = 1024*256
     # 紀錄開始時間
     startTime = time.time()
@@ -28,7 +41,7 @@ def main():
         dirList = list()
         for d in os.listdir():
             if os.path.isdir(os.path.join("", d)):
-                if d != "urls" and d != "words":
+                if d != "urls" and d != "words" and d!= "__pycache__":
                     dirList.append(d)
 
         if not len(dirList):
@@ -124,6 +137,7 @@ def main():
                         print("Y=1, count= {} ".format(count))
                         print("work get done!")
                         print("Cost time= {} ".format(time.time() - startTime))
+                        print("接下來則執行multithreads_download_from_url_files.py 來下載圖檔。")
                         break
 
 

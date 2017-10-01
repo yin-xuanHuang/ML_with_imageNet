@@ -1,6 +1,17 @@
 #!/bin/bash
+# 執行此程式前，請先確認是否已經執行完pre-clean_images_v2.sh
+# 此程式的工作：
+# 1.在 image_1 和 image_0 裡刪除 size 小於 4000bytes 的檔案，
+#  （為什麼是4000bytes，這是苦主的經驗談。。。）
+#   也就是 pre-clean_images_v2.sh 沒掃到的漏網之魚。
+# 2.除了將image_1複製一份到cleaned_dir，
+#   另外在製作一份左右對調的image_1圖片到cleaned_dir裡，
+#   因為image_1 的資料相對於image_0資料少。
+# 3.將cleaned_dir 裡的image_1 總數乘上3倍（預設），
+#   就是我們要移入cleaned_dir 的image_0 數量拉，
+#   有用亂數選定的方式，以保持分佈均勻。
 
-# 預設 y = 0 的資料量為 y = 1 的資料量三倍。
+# 預設 y = 0 的資料量為 y = 1 的資料量三倍（預設）。
 ((y0dy1=3))
 
 clear
@@ -144,3 +155,4 @@ done
 cd ..
 echo "$count"
 echo "clean done."
+echo "接下來，按照流程，是執行images2hdf5.py 的時候。"

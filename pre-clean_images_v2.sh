@@ -1,6 +1,7 @@
 #!/bin/bash
 # pre-clean all file data in the directory
 '''
+此程式的工作：
 1. 清除非圖片格式
 2. 清除壞檔
 3. 清除miss圖片

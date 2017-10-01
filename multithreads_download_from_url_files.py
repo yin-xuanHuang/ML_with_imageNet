@@ -1,7 +1,12 @@
 '''
-多執行緒抓圖片url
+此程式的工作：
+1. 多執行緒抓圖片url
+
+*  如果下載中意外停止，可以先使用update_url.py
+   來快速清理已經下載的連結，讓下載時間縮短。
+工作方式：
 one thread put(file.readline)
-other thread get() ,parse and requests it
+other thread get() , parse, requests and download images
 '''
 
 import os
@@ -10,7 +15,7 @@ import threading
 import time
 import requests
 # 設定總執行緒數
-num_threads = 23
+num_threads = 31
 # 等待put thread 先處理一陣子，在加入 get threads，秒
 put_prepare_time = 3
 
@@ -51,6 +56,12 @@ def get_picture(image_dir, line_queue,  put_done):
                     print('TooManyRedirects')
                 except requests.exceptions.RequestException as e:
                     print("RequestException")
+                except Exception as e:
+                    print("%s"%e)
+                    # record message
+                    with open(os.path.join(image_dir, "..","download_error_messages"), 'a+') as fh:
+                        fh.write(str(e)+"\n")
+                    fh.close()
                 else:
                     # 200
                     try:
@@ -71,7 +82,7 @@ def get_picture(image_dir, line_queue,  put_done):
                         fh.close()
 
 def put_urls(url_file, line_queue,  put_done):
-    with open(url_file, encoding='ascii', errors='replace', mode='r') as f:
+    with open(url_file, encoding='utf-8', errors='replace', mode='r') as f:
         while True:
             '''
             當queue里的資料數大於100條，
@@ -104,7 +115,7 @@ def foreman(url_file_name, working_dirPath):
     thread_pool = []
 
     download_dirPath = os.path.join(working_dirPath, "image_" + url_file_name[-1])
-    if not os.path.exists(download_dirPath)
+    if not os.path.exists(download_dirPath):
         os.makedirs(download_dirPath)
 
 
@@ -143,13 +154,12 @@ def foreman(url_file_name, working_dirPath):
     # rewrite the file
 
 def main():
-    # 紀錄開始時間
     startTime = time.time()
     # 過濾篩選可能有效的資料夾
     dirList = list()
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words":
+            if d != "urls" and d != "words" and d != "__pycache__":
                 dirList.append(d)
 
     if not len(dirList):
@@ -176,9 +186,15 @@ def main():
                     print("此 {} 資料夾內，沒有或缺少 url files！！".format(dirList[int(dirIdex)]))
                     break
                 else:
-                    foreman(url_file_name=dirList[int(dirIdex)] + "_urls_0", working_dirPath=dirPath)
+                    # 紀錄開始時間
+                    startTime = time.time()
                     foreman(url_file_name=dirList[int(dirIdex)] + "_urls_1", working_dirPath=dirPath)
+                    foreman(url_file_name=dirList[int(dirIdex)] + "_urls_0", working_dirPath=dirPath)
+                    print("恭喜，完成這流程最長的環節。")
+                    print("接下來，使用pre-clean_images_v2.sh 來整理下載的圖檔。")
                     break
+
+        print("Cost time: {} ".format(time.time() - startTime))
 
 
 if __name__ == "__main__":

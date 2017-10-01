@@ -1,4 +1,12 @@
+'''
 
+此程式工作為：
+1. 將下載下來的圖片檔(在image_0 和image_1裡的)，
+   整理成一個.hdf5 檔，以便下一步的機器學習。
+2. 此程式大部分參考網路
+Ref.: http://machinelearninguru.com/deep_learning/data_preparation/hdf5/hdf5.html
+
+'''
 import os
 import time
 
@@ -11,10 +19,12 @@ import h5py
 import cv2
 
 def worker(parent_dirPath):
+    # 設定圖片大小 64 x 64 （預設）
     image_size = 64
 
     shuffle_data = True  # shuffle the addresses before saving
-    hdf5_path = os.path.join(parent_dirPath, "dataset", "dataset"+ str(image_size) +".hdf5")  # address to where you want to save the hdf5 file
+    # address to where you want to save the hdf5 file
+    hdf5_path = os.path.join(parent_dirPath, "dataset", "dataset"+ str(image_size) +".hdf5")
 
     if not os.path.isdir(os.path.join(parent_dirPath, "dataset")):
         os.makedirs(os.path.join(parent_dirPath, "dataset"))
@@ -185,6 +195,7 @@ def main():
                     break
 
         print("Cost time: {} ".format(time.time() - startTime))
+        print("接下來就要進入機器學習的部份，執行dnn_2_layers_Training.py")
 
 
 if __name__ == "__main__":

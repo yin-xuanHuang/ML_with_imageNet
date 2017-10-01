@@ -1,4 +1,13 @@
+'''
 
+此程式為額外程式，
+如果執行multithreads_dawnload_from_url_files.py ，
+發生中途中止的事件，可先執行此程式，再執行下載檔案。
+
+此程式的工作：
+1. 將已經下載下來的url 整理一番。
+
+'''
 import os
 import time
 

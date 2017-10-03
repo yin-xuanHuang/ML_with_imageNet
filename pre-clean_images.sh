@@ -115,3 +115,4 @@ do
   cd ..
 done
 echo "Pre-clean images done!"
+echo "接下來請執行clean_images.sh"

@@ -17,7 +17,7 @@ Python3 安裝依賴套件：
 1. keyword2wnid.py   # 產生專案目錄以及wnid 列表檔
 2. wnid2url.py   # 利用wnid 列表檔，產生url 列表檔
 3. multithreads_download_from_url_files.py   # 利用url 列表檔，下載圖片資料
-4. update_url.py   # 清理掉已經下載好的url 列表 (另外的)
+4. update_url.py   # 清理掉已經下載好的url 列表 (可選)
 5. ./pre-clean_images.sh   # 圖片清理
 6. ./clean_images.sh   # 圖片清理
 7. images2hdf5.py   # 講圖片檔轉成一個資料檔

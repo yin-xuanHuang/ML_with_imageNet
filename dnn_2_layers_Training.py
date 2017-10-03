@@ -15,9 +15,9 @@ import scipy
 from PIL import Image
 from scipy import ndimage
 
-from dnn_app_utils_v2 import *
+from ml_app import *
 
-def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False, , paramsPath=None):
+def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3000, print_cost=False, , paramsPath=None):
     grads = {}
     costs = []                         # keep track of cost
     learning_rates = []                # keep track of learning_rate
@@ -87,7 +87,7 @@ def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 
 def training(hdf5Path, SaveDirPath, project_name):
     image_size = 64
     # Loading the dataset
-    X_train_orig, Y_train_orig, X_test_orig, Y_test_orig = load_dataset(hdf5Path=hdf5Path)
+    X_train_orig, Y_train, X_test_orig, Y_test = load_dataset(hdf5Path=hdf5Path)
 
     X_train_flatten = X_train_orig.reshape(X_train_orig.shape[0], -1).T
     #X_val_flatten = X_val_orig.reshape(X_val_orig.shape[0], -1).T
@@ -97,21 +97,23 @@ def training(hdf5Path, SaveDirPath, project_name):
     #X_val = X_val_flatten/255.
     X_test = X_test_flatten/255.
 
-    Y_train = Y_train_orig
-    #Y_val = Y_val_orig
-    Y_test = Y_test_orig
-
     print ("number of training examples = " + str(X_train.shape[1]))
     print ("number of test examples = " + str(X_test.shape[1]))
     print ("X_train shape: " + str(X_train.shape))
     print ("Y_train shape: " + str(Y_train.shape))
+    #print ("X_val shape: " + str(X_val.shape))
+    #print ("Y_val shape: " + str(Y_val.shape))
     print ("X_test shape: " + str(X_test.shape))
     print ("Y_test shape: " + str(Y_test.shape))
 
-    # 設定hidden layer 的節點數，預設：7
+    # 設定 1 hidden layer 的節點數，預設：7
     layers_dims = (X_train.shape[0], 7, 1)
 
-    parameters, costs, learning_rates = two_layer_model(X_train, Y_train, layers_dims = layers_dims, num_iterations = 2500, print_cost=True)
+    parameters, costs, learning_rates = two_layer_model(X_train,
+                                                        Y_train,
+                                                        layers_dims = layers_dims,
+                                                        num_iterations = 3000, 
+                                                        print_cost=True)
 
     # save parameters
     np.save(os.path.join(SaveDirPath, project_name + ".npy"), parameters)
@@ -130,7 +132,7 @@ def training(hdf5Path, SaveDirPath, project_name):
         f.write(learning_rates2print)
     f.close()
 
-    # plot the cost
+    # plot the cost and save
     plt.plot(np.squeeze(costs))
     plt.ylabel('cost')
     plt.xlabel('iterations')

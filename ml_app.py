@@ -45,7 +45,7 @@ def load_dataset(hdf5Path):
 
     train_set_x_orig = np.array(dataset["train_img"][:]) # your train set features
     train_set_y_orig = np.array(dataset["train_labels"][:]) # your train set labels
-
+    # dev
     #val_set_x_orig = np.array(dataset["val_img"][:]) # your val set features
     #val_set_y_orig = np.array(dataset["val_labels"][:]) # your val set labels
 
@@ -84,32 +84,25 @@ def initialize_parameters_deep(layer_dims):
     for l in range(1, L):
         parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) / np.sqrt(layer_dims[l-1])
         parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
-
         assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
         assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
-
-
     return parameters
 
 def linear_forward(A, W, b):
     Z = W.dot(A) + b
     assert(Z.shape == (W.shape[0], A.shape[1]))
     cache = (A, W, b)
-
     return Z, cache
 
 def linear_activation_forward(A_prev, W, b, activation):
     if activation == "sigmoid":
         Z, linear_cache = linear_forward(A_prev, W, b)
         A, activation_cache = sigmoid(Z)
-
     elif activation == "relu":
         Z, linear_cache = linear_forward(A_prev, W, b)
         A, activation_cache = relu(Z)
-
     assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
-
     return A, cache
 
 def L_model_forward(X, parameters):
@@ -122,19 +115,14 @@ def L_model_forward(X, parameters):
         caches.append(cache)
     AL, cache = linear_activation_forward(A, parameters['W' + str(L)], parameters['b' + str(L)], activation = "sigmoid")
     caches.append(cache)
-
     assert(AL.shape == (1,X.shape[1]))
-
     return AL, caches
 
 def compute_cost(AL, Y):
     m = Y.shape[1]
-
     cost = (1./m) * (-np.dot(Y,np.log(AL).T) - np.dot(1-Y, np.log(1-AL).T))
-
     cost = np.squeeze(cost)
     assert(cost.shape == ())
-
     return cost
 
 def linear_backward(dZ, cache):
@@ -157,7 +145,6 @@ def linear_activation_backward(dA, cache, activation):
     if activation == "relu":
         dZ = relu_backward(dA, activation_cache)
         dA_prev, dW, db = linear_backward(dZ, linear_cache)
-
     elif activation == "sigmoid":
         dZ = sigmoid_backward(dA, activation_cache)
         dA_prev, dW, db = linear_backward(dZ, linear_cache)
@@ -212,16 +199,3 @@ def predict(X, y, parameters):
     print("Accuracy: "  + str(np.sum((p == y)/m)))
 
     return p
-
-def print_mislabeled_images(classes, X, y, p):
-    a = p + y
-    mislabeled_indices = np.asarray(np.where(a == 1))
-    plt.rcParams['figure.figsize'] = (40.0, 40.0)
-    num_images = len(mislabeled_indices[0])
-    for i in range(num_images):
-        index = mislabeled_indices[1][i]
-
-        plt.subplot(2, num_images, i + 1)
-        plt.imshow(X[:,index].reshape(64,64,3), interpolation='nearest')
-        plt.axis('off')
-        plt.title("Prediction: " + classes[int(p[0,index])].decode("utf-8") + " \n Class: " + classes[y[0,index]].decode("utf-8"))

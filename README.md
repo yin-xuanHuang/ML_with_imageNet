@@ -9,7 +9,7 @@
 Ubuntu16.04 安裝依賴套件：
 >sudo apt-get install python3-setuptools python3-dev python3-h5py python3-matplotlib python3-psutil
 
-Python3 安裝依賴套件：
+Python3 安裝依賴套件(建議用virtualenv)：
 >pip3 install -r requirements.txt
 
 工作流程
@@ -26,6 +26,9 @@ Python3 安裝依賴套件：
 
 > **Note:**
 
+> - 分辨 miss image是利用 command line的 identify指令，
+> 對人工辨識的 miss image算出一組 signature hash code，
+> 凡是圖片有相同的 signature hash，則視為 miss images。
 > - 請自行下載url檔，以及words.txt檔，並解壓縮，
 > 將文件檔各自放置在urls 和words資料夾裡。
 > - imageNet 的分類，有一個重點，她只保證有什麼，

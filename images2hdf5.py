@@ -95,7 +95,7 @@ def worker(parent_dirPath):
         addr = train_addrs[i]
         img = cv2.imread(addr)
         img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
-        #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
 
@@ -118,7 +118,7 @@ def worker(parent_dirPath):
         addr = val_addrs[i]
         img = cv2.imread(addr)
         img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
-        #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
 
@@ -140,7 +140,7 @@ def worker(parent_dirPath):
         addr = test_addrs[i]
         img = cv2.imread(addr)
         img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
-        #img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
 

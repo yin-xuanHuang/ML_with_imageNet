@@ -46,7 +46,7 @@ def main():
             # 檢查檔案是否存在
             if not os.path.isfile(words_file_path):
                 print(chr(27) + "[2J") # 清理螢幕
-                print("找不到 words/words.txt 檔案。")
+                print("找不到 words/words.txt 檔案，請閱讀words/readme 文件，自行下載檔案。")
                 break
             else:
                 # 將檔案以列為單位，形成list()存到words_list
@@ -89,7 +89,7 @@ def main():
                             print("http://www.image-net.org/synset?wnid=" + list_wnid_sentence[0])
                     f.close()
                     print("Get {}/{}_wnids file!".format(dirName, keyWord))
-                    print("小建議：除非對英文很有自信，不然跟本苦主一樣，查一下比較好。")
+                    print("小建議：除非對英文很有自信，不然跟本苦主一樣，查一下比較好，有些wnid也可能已經失效。")
                     print("（苦主經驗：因為truck 學會hand truck 這個單字。）")
                     print("以上確認完畢後，接下來則執行wnid2url.py 來獲得下載urls列表。")
                     break

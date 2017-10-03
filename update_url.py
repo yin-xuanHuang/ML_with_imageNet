@@ -12,7 +12,12 @@ import os
 import time
 
 def worker(dirPath, dirName):
+'''
+讀完url --> 處理 --> 覆蓋覆寫
 
+連續沒下載的url達到10000筆，
+代表之前還沒跑過。
+'''
     for i in range(2):
         url_file = os.path.join(dirPath, dirName + "_urls_" + str(i))
         print("Read image list in memory,")

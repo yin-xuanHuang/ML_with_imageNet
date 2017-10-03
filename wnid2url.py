@@ -41,7 +41,7 @@ def main():
         dirList = list()
         for d in os.listdir():
             if os.path.isdir(os.path.join("", d)):
-                if d != "urls" and d != "words" and d!= "__pycache__":
+                if d != "urls" and d != "words" and d!= "__pycache__" and d!= "img":
                     dirList.append(d)
 
         if not len(dirList):

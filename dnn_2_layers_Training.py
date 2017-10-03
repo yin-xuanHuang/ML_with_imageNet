@@ -17,7 +17,7 @@ from scipy import ndimage
 
 from ml_app import *
 
-def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3000, print_cost=False, , paramsPath=None):
+def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3000, print_cost=False, paramsPath=None):
     grads = {}
     costs = []                         # keep track of cost
     learning_rates = []                # keep track of learning_rate
@@ -42,6 +42,7 @@ def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3
     per100iteration_time=time.time()
     # Loop (gradient descent)
     for i in range(0, num_iterations):
+        periteration_time=time.time()
 
         A1, cache1 = linear_activation_forward(X, W1, b1, 'relu')
         A2, cache2 = linear_activation_forward(A1, W2, b2, 'sigmoid')
@@ -112,7 +113,7 @@ def training(hdf5Path, SaveDirPath, project_name):
     parameters, costs, learning_rates = two_layer_model(X_train,
                                                         Y_train,
                                                         layers_dims = layers_dims,
-                                                        num_iterations = 3000, 
+                                                        num_iterations = 3000,
                                                         print_cost=True)
 
     # save parameters
@@ -136,7 +137,7 @@ def training(hdf5Path, SaveDirPath, project_name):
     plt.plot(np.squeeze(costs))
     plt.ylabel('cost')
     plt.xlabel('iterations')
-    plt.savefig(fname=os.path.join(SaveDirPath, project_name + ".png"))
+    plt.savefig(filename=os.path.join(SaveDirPath, project_name + ".png"))
     plt.show()
 
     predictions_train = predict(X_train, Y_train, parameters)

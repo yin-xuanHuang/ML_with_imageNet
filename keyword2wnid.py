@@ -89,7 +89,7 @@ def main():
                             print("http://www.image-net.org/synset?wnid=" + list_wnid_sentence[0])
                     f.close()
                     print("Get {}/{}_wnids file!".format(dirName, keyWord))
-                    print("小建議：除非對英文很有自信，不然跟本苦主一樣，查一下比較好，有些wnid也可能已經失效。")
+                    print("小建議：除非對英文很有自信，不然跟本苦主一樣查一下。")
                     print("（苦主經驗：因為truck 學會hand truck 這個單字。）")
                     print("以上確認完畢後，接下來則執行wnid2url.py 來獲得下載urls列表。")
                     break

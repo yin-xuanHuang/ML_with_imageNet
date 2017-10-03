@@ -91,7 +91,7 @@ do
   do
     if [[ `file "$f" | grep -v 'image data\|PC bitmap'` == "" ]]
     then
-      identify_f=`identify -quiet -format "%#" "$f"`
+      identify_f=`identify -verbose -format "%#" "$f"`
       if [[ " ${miss_identify_arr[@]} " =~ " $identify_f " ]]
       then
         size_f=`convert "$f" -format "%w x %h" info:`

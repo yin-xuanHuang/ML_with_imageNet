@@ -146,7 +146,6 @@ def foreman(url_file_name, working_dirPath):
 
     while True:
         time.sleep(1)
-        print(threading.current_thread())
         if line_queue.empty():
             time.sleep(1)
             print("Job get down!")
@@ -159,7 +158,7 @@ def main():
     dirList = list()
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words" and d != "__pycache__":
+            if d != "urls" and d != "words" and d != "__pycache__" and d!= "img":
                 dirList.append(d)
 
     if not len(dirList):

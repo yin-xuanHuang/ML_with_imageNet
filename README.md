@@ -38,3 +38,5 @@ Python3 安裝依賴套件：
 * OS: ubuntu16.04
 * CPU: Intel® Core™ i5-3470 CPU @ 3.20GHz × 4
 * RAM: 15.6 GiB
+
+MIT License

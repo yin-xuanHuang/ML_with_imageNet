@@ -81,6 +81,15 @@ cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
+if ! [[ -d "image_1" ]]
+then
+  echo "image_1 資料夾不存在!"
+  exit
+elif ! [[ -d "image_0" ]]
+then
+  echo "image_0 資料夾不存在!"
+  exit
+fi
 
 mkdir cleaned_dir
 

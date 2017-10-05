@@ -80,6 +80,16 @@ cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
+if ! [[ -d "image_1" ]]
+then
+  echo "image_1 資料夾不存在!"
+  exit
+elif ! [[ -d "image_0" ]]
+then
+  echo "image_0 資料夾不存在!"
+  exit
+fi
+
 echo "第一階段：刪除miss images, not image dat 並且全部轉換成jpg。"
 # error or miss 檔案處理開始
 # 轉jpg

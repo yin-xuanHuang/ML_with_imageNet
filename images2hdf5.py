@@ -9,14 +9,13 @@ Ref.: http://machinelearninguru.com/deep_learning/data_preparation/hdf5/hdf5.htm
 '''
 import os
 import time
-
 from random import shuffle
 import glob
 
 import numpy as np
 import h5py
-
 import cv2
+
 
 def worker(parent_dirPath):
     # 設定圖片大小 64 x 64 （預設）
@@ -94,7 +93,9 @@ def worker(parent_dirPath):
         # cv2 load images as BGR, convert it to RGB
         addr = train_addrs[i]
         img = cv2.imread(addr)
-        img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img,
+                         (image_size, image_size),
+                         interpolation=cv2.INTER_LINEAR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
@@ -117,7 +118,9 @@ def worker(parent_dirPath):
         # cv2 load images as BGR, convert it to RGB
         addr = val_addrs[i]
         img = cv2.imread(addr)
-        img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img,
+                         (image_size, image_size),
+                         interpolation=cv2.INTER_LINEAR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
@@ -139,7 +142,9 @@ def worker(parent_dirPath):
         # cv2 load images as BGR, convert it to RGB
         addr = test_addrs[i]
         img = cv2.imread(addr)
-        img = cv2.resize(img, (image_size, image_size), interpolation=cv2.INTER_LINEAR)
+        img = cv2.resize(img,
+                         (image_size, image_size),
+                         interpolation=cv2.INTER_LINEAR)
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # add any image pre-processing here
@@ -159,9 +164,10 @@ def main():
     startTime = time.time()
     # 過濾篩選可能有效的資料夾
     dirList = list()
+    ignore_dir = ["urls", "words", "__pycache__", "tools", "img", ".git"]
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words" and d != "__pycache__":
+            if d not in ignore_dir:
                 dirList.append(d)
 
     if not len(dirList):

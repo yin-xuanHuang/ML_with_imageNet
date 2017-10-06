@@ -1,9 +1,9 @@
 '''
 此程式的工作：
 1. 多執行緒抓圖片url
-
 *  如果下載中意外停止，可以先使用update_url.py
    來快速清理已經下載的連結，讓下載時間縮短。
+
 工作方式：
 one thread put(file.readline)
 other thread get() , parse, requests and download images
@@ -13,7 +13,10 @@ import os
 import queue
 import threading
 import time
+
 import requests
+
+
 # 設定總執行緒數
 num_threads = 31
 # 等待put thread 先處理一陣子，在加入 get threads，秒
@@ -44,7 +47,10 @@ def get_picture(image_dir, line_queue,  put_done):
                         time.sleep(0.1)
                         continue
 
-                    response = requests.get(list_wnidid_url[1], timeout=10, stream=True, allow_redirects=True)
+                    response = requests.get(list_wnidid_url[1],
+                                            timeout=10,
+                                            stream=True,
+                                            allow_redirects=True)
                 except requests.exceptions.ConnectionError as e:
                     # DNS failure, refused connection, etc
                     print("ConnectionError")
@@ -67,11 +73,11 @@ def get_picture(image_dir, line_queue,  put_done):
                     try:
                         # Open the output file and make sure we write in binary mode
                         with open(os.path.join(image_dir, fileName), 'wb') as fh:
-                            for chunk in response.iter_content(1024 * 1024):
+                            for chunk in response.iter_content(1024*1024):
                                 # Write the chunk to the file
                                 fh.write(chunk)
                                 # Optionally we can check here if the download is taking too long
-                        print(fileName + ":download!")
+                        print("{:16}: download!".format(fileName))
                     except Exception as e:
                         print("%s"%e)
                         # record message
@@ -85,8 +91,8 @@ def put_urls(url_file, line_queue,  put_done):
     with open(url_file, encoding='utf-8', errors='replace', mode='r') as f:
         while True:
             '''
-            當queue里的資料數大於100條，
-            則1秒增加1條。
+            當queue里的資料數大於200條，
+            則1秒增加2條。
             from start_time to calculate cost time 0.00001
             '''
             #start_time = time.time()
@@ -117,7 +123,6 @@ def foreman(url_file_name, working_dirPath):
     download_dirPath = os.path.join(working_dirPath, "image_" + url_file_name[-1])
     if not os.path.exists(download_dirPath):
         os.makedirs(download_dirPath)
-
 
     if num_threads > 1:
         t_put = threading.Thread(target=put_urls,
@@ -156,9 +161,10 @@ def main():
     startTime = time.time()
     # 過濾篩選可能有效的資料夾
     dirList = list()
+    ignore_dir = ["urls", "words", "__pycache__", "tools", "img", ".git"]
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words" and d != "__pycache__" and d!= "img":
+            if d not in ignore_dir:
                 dirList.append(d)
 
     if not len(dirList):
@@ -181,7 +187,8 @@ def main():
                 # 工作資料夾
                 dirPath = os.path.join(dirList[int(dirIdex)])
                 # 確認是否有 url files
-                if not (os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_0")) and os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_1"))):
+                if not (os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_0")) and \
+                        os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_1"))):
                     print("此 {} 資料夾內，沒有或缺少 url files！！".format(dirList[int(dirIdex)]))
                     break
                 else:

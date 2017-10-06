@@ -8,7 +8,6 @@ import os
 import time
 
 import h5py
-
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy
@@ -17,7 +16,14 @@ from scipy import ndimage
 
 from ml_app import *
 
-def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3000, print_cost=False, paramsPath=None):
+
+def two_layer_model(X,
+                    Y,
+                    layers_dims,
+                    learning_rate=0.003,
+                    num_iterations=3000,
+                    print_cost=False,
+                    paramsPath=None):
     grads = {}
     costs = []                         # keep track of cost
     learning_rates = []                # keep track of learning_rate
@@ -49,7 +55,7 @@ def two_layer_model(X, Y, layers_dims, learning_rate = 0.003, num_iterations = 3
 
         cost = compute_cost(A2, Y)
 
-        dA2 = - (np.divide(Y, A2) - np.divide(1 - Y, 1 - A2))
+        dA2 = - (np.divide(Y, A2) - np.divide(1-Y, 1-A2))
 
         dA1, dW2, db2 = linear_activation_backward(dA2, cache2, 'sigmoid')
         dA0, dW1, db1 = linear_activation_backward(dA1, cache1, 'relu')
@@ -112,8 +118,8 @@ def training(hdf5Path, SaveDirPath, project_name):
 
     parameters, costs, learning_rates = two_layer_model(X_train,
                                                         Y_train,
-                                                        layers_dims = layers_dims,
-                                                        num_iterations = 3000,
+                                                        layers_dims=layers_dims,
+                                                        num_iterations=3000,
                                                         print_cost=True)
 
     # save parameters
@@ -150,9 +156,10 @@ def main():
     startTime = time.time()
     # 過濾篩選可能有效的資料夾
     dirList = list()
+    ignore_dir = ["urls", "words", "__pycache__", "tools", "img", ".git"]
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words" and d != "__pycache__":
+            if d not in ignore_dir:
                 dirList.append(d)
 
     if not len(dirList):
@@ -210,7 +217,9 @@ def main():
                                 hdf5Path = os.path.join(dirList[int(dirIdex)], "dataset", hdf5List[int(hdf5Idex)])
                                 # 紀錄開始時間
                                 startTime = time.time()
-                                training(hdf5Path=hdf5Path, SaveDirPath=SaveDirPath, project_name=project_name)
+                                training(hdf5Path=hdf5Path,
+                                         SaveDirPath=SaveDirPath,
+                                         project_name=project_name)
                                 break
                         break
 

@@ -80,6 +80,7 @@ cd ./"${darr[$dir_idex]}"
 echo -n "Working directory(now):"
 pwd
 
+# 檢查image_0 image_1 是否存在
 if ! [[ -d "image_1" ]]
 then
   echo "image_1 資料夾不存在!"

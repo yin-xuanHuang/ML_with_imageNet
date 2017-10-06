@@ -11,13 +11,14 @@
 import os
 import time
 
-def worker(dirPath, dirName):
-'''
-讀完url --> 處理 --> 覆蓋覆寫
 
-連續沒下載的url達到10000筆，
-代表之前還沒跑過。
-'''
+def worker(dirPath, dirName):
+    '''
+    讀完url --> 處理 --> 覆蓋覆寫
+
+    連續沒下載的url達到10000筆，
+    代表之前還沒跑過。
+    '''
     for i in range(2):
         url_file = os.path.join(dirPath, dirName + "_urls_" + str(i))
         print("Read image list in memory,")
@@ -53,9 +54,10 @@ def main():
     startTime = time.time()
     # 過濾篩選可能有效的資料夾
     dirList = list()
+    ignore_dir = ["urls", "words", "__pycache__", "tools", "img", ".git"]
     for d in os.listdir():
         if os.path.isdir(os.path.join("", d)):
-            if d != "urls" and d != "words":
+            if d not in ignore_dir:
                 dirList.append(d)
 
     if not len(dirList):
@@ -78,7 +80,8 @@ def main():
                 # 工作資料夾
                 dirPath = os.path.join(dirList[int(dirIdex)])
                 # 確認是否有 url files
-                if not (os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_0")) and os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_1"))):
+                if not (os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_0")) and \
+                        os.path.isfile(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_1"))):
                     print("此 {} 資料夾內，沒有或缺少 url files！！".format(dirList[int(dirIdex)]))
                     break
                 else:

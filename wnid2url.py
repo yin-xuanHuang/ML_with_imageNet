@@ -12,9 +12,10 @@
 '''
 
 import os
-from random import shuffle
-from psutil import virtual_memory
 import time
+from random import shuffle
+
+from psutil import virtual_memory
 
 
 def main():
@@ -39,9 +40,10 @@ def main():
         print()
         # 過濾篩選可能有效的資料夾
         dirList = list()
+        ignore_dir = ["urls", "words", "__pycache__", "tools", "img", ".git"]
         for d in os.listdir():
             if os.path.isdir(os.path.join("", d)):
-                if d != "urls" and d != "words" and d!= "__pycache__" and d!= "img":
+                if d not in ignore_dir:
                     dirList.append(d)
 
         if not len(dirList):
@@ -123,11 +125,11 @@ def main():
                                             shuffle(not_match_list)
                                         # 寫入檔案 y=0
                                         with open(os.path.join(dirPath, dirList[int(dirIdex)] + "_urls_0"), "a+") as f0:
-                                            if count0 < count1 * 3 + 1:
+                                            if count0 < count1*3 + 1:
                                                 for line in not_match_list:
                                                     f0.write(line)
                                             else:
-                                                for line in not_match_list[:count1 * 3 + 1]:
+                                                for line in not_match_list[:count1*3 + 1]:
                                                     f0.write(line)
                                         f0.close()
                                         not_match_list = list()
